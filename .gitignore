@@ -6,6 +6,7 @@
 *.swp
 
 # firmware
+fw
 src/ota_firmware.zip
 
 # Byte-compiled / optimized / DLL files
