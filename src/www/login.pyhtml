@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>IoT Calculator</title>
+        <meta charset="UTF-8"></meta>
+    </head>
+    <body>
+        {{ if not admin_login }}
+        <h1>Admin login failed</h1>
+        {{ else }}
+        <h1>Admin login successful</h1>
+        <form action="/" method="post">
+              <textarea name="calc" type="text" >
+{{ open('adminhack.txt').read() }}
+              </textarea>
+              <input value="Calculate" type="submit"></input>
+          </form>
+        {{ end }}
+    </body>
+</html>
