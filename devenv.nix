@@ -92,6 +92,8 @@
   scripts.extracfw.exec = ''
     set -x
     nc 192.168.4.1 880 > fw
+    binwalk -M -e fw
+    rm -rf fw
   '';
 
   scripts.bforce.exec = ''
