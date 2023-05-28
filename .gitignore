@@ -5,6 +5,9 @@
 # vim
 *.swp
 
+# firmware
+src/ota_firmware.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
