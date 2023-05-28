@@ -127,7 +127,7 @@
 
   scripts.extracfw.exec = ''
     set -x
-    true | nc 192.168.4.1 880 > fw
+    nc -w 1 192.168.4.1 880 > fw
     binwalk -M -e fw
     rm -rf fw
   '';
