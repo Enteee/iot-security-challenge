@@ -1,7 +1,8 @@
 import socket
 import _thread
 
-ADDR = socket.getaddrinfo('0.0.0.0', 880)[0][-1]
+OTA_PORT = 880
+ADDR = socket.getaddrinfo('0.0.0.0', OTA_PORT)[0][-1]
 
 def _serve_fw_thread():
     print(f'[FW] Binding socket')

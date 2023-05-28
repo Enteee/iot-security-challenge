@@ -5,6 +5,10 @@ import gc
 esp.osdebug(None)
 gc.collect()
 
+# Start OTA Update
+import ota
+ota.start_ota()
+
 # Start access point
 import ap
 ap.start_ap()
