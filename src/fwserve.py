@@ -10,7 +10,11 @@ def _accept_connection(sock):
 
     print(f"[FW] Client connected from: {addr}")
     with open("ota_firmware.zip", "rb") as fd:
-        cl.send(fd.read())
+        while True:
+            data = fd.read(100)
+            if not data:
+                break
+            cl.send(data)
 
     print(f"[FW] Closing socket")
     cl.close()
