@@ -8,7 +8,7 @@ ADDR = socket.getaddrinfo("0.0.0.0", OTA_PORT)[0][-1]
 def _accept_connection(sock):
     cl, addr = sock.accept()
 
-    print(f"[FW] Client connected from: {addr}")
+    print(f"[FW] client connected from: {addr}")
     with open("ota_firmware.zip", "rb") as fd:
         while True:
             data = fd.read(100)
@@ -16,7 +16,7 @@ def _accept_connection(sock):
                 break
             cl.send(data)
 
-    print(f"[FW] Closing socket")
+    print(f"[FW] closing socket")
     cl.close()
 
 
@@ -28,22 +28,22 @@ def _bind_socket():
 
 
 def _serve_fw_thread():
-    print(f"[FW] Binding socket")
+    print(f"[FW] binding socket")
     sock = None
     while sock is None:
         try:
             sock = _bind_socket()
         except Exception as ex:
-            print(f"[FW] Failed: {type(ex)} {ex}")
+            print(f"[FW] failed: {type(ex)} {ex}")
 
-    print(f"[FW] Accepting connection")
+    print(f"[FW] accepting connection")
     while True:
         try:
             _accept_connection(sock)
         except Exception as ex:
-            print(f"[FW] Failed: {type(ex)} {ex}")
+            print(f"[FW] failed: {type(ex)} {ex}")
 
 
 def serve_fw():
-    print(f"[FW] Start serving firmware")
+    print(f"[FW] start serving firmware")
     _thread.start_new_thread(_serve_fw_thread, ())

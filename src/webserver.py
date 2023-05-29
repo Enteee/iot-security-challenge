@@ -30,7 +30,7 @@ def _basicAuth(httpClient, httpResponse):
         return False
 
     (user, pw) = a2b_base64(cred).decode().split(":")
-    print(f"[WS] Login from {user}, with password: {pw}")
+    print(f"[WS] login from {user}, with password: {pw}")
 
     if pw != BASIC_AUTH_PASSWORD:
         _authRequired()
@@ -69,10 +69,10 @@ def _httpHandlerTestPost(httpClient, httpResponse):
 
 
 def start_server():
-    print(f"[WS] Starting webserver")
+    print(f"[WS] starting webserver")
     while True:
         try:
             srv = MicroWebSrv(webPath="www/")
             srv.Start(threaded=False)
         except Exception as ex:
-            print(f"[WS] Failed: {type(ex)} {ex}")
+            print(f"[WS] failed: {type(ex)} {ex}")

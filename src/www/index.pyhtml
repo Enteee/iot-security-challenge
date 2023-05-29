@@ -3,9 +3,9 @@
     calc = "((1+2)*3-5) ** 12"
     calc_result = ""
   else:
-    print(f"Running: {calc}")
+    print(f"[CALC] running: {calc}")
     calc_result = eval(calc)
-    print(f"Result: {calc_result}")
+    print(f"[CALC] result: {calc_result}")
 
 {{ end }}
 

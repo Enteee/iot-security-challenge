@@ -13,13 +13,13 @@ OTA_PORT = 880
 
 def _fetch_fw(ip):
     sock_info = socket.getaddrinfo(ip, OTA_PORT, 0, socket.SOCK_STREAM)[0][-1]
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Connecting to: {sock_info}")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] connecting to: {sock_info}")
     sock = socket.socket()
     sock.settimeout(FETCH_SOCKET_TIMEOUT__S)
     sock.connect(sock_info)
 
     fw_len = len(sock.read())
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Got firmware: {fw_len} bytes")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] got firmware: {fw_len} bytes")
 
     sock.close()
 
@@ -30,26 +30,26 @@ def _update_fom_station(sta_if, ssid):
     for _ in range(MAX_OTA_RETRY):
         if sta_if.isconnected():
             break
-        print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Waiting for connection")
+        print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] waiting for connection")
         time.sleep(SLEEP_TIME__S)
 
     (ip, netmask, gateway, dns) = sta_if.ifconfig()
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Connected: {sta_if.ifconfig()}")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] connected: {sta_if.ifconfig()}")
     _fetch_fw(gateway)
     sta_if.disconnect()
 
 
 def _do_update(sta_if):
     update_completed = 0
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Searching for OTA device")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] searching for OTA device")
     stations = sta_if.scan()
     for ssid, bssid, channel, RSSI, security, hidden in stations:
         if ssid.startswith(SSID_PREFIX):
-            print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Connecting to network: {ssid}")
+            print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] connecting to network: {ssid}")
             _update_fom_station(sta_if, ssid)
             update_completed += 1
 
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Updated from {update_completed} devices")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] updated from {update_completed} devices")
     return update_completed > 0
 
 
@@ -70,15 +70,15 @@ def _reset_sta_if(sta_if):
 def start_ota():
     global OTA_RETRY
     sta_if = network.WLAN(network.STA_IF)
-    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Start OTA")
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] start OTA")
     for OTA_RETRY in range(MAX_OTA_RETRY):
         try:
             _reset_sta_if(sta_if)
             if _do_update(sta_if):
-                print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] OTA completed")
+                print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] update completed")
                 break
         except Exception as ex:
-            print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Failed: {type(ex)} {ex}")
+            print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] failed: {type(ex)} {ex}")
         finally:
             sta_if.active(False)
             while sta_if.active():
