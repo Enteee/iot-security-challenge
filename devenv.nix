@@ -85,8 +85,15 @@
 
     tty="''${1:-/dev/ttyUSB0}"
     picocom \
-      "''${tty}" \
-      -b115200
+      -b115200 \
+      "''${tty}"
+  '';
+
+  scripts.repl_peek.exec = ''
+    set -exuo pipefail
+
+    tty="''${1:-/dev/ttyUSB0}"
+    sleep infinity | repl "''${tty}"
   '';
 
   scripts.fs.exec = ''
