@@ -144,9 +144,12 @@
         *.py www/ \
         "''${fw_tmp}/ota_firmware.bin"
 
-      zip \
-        "''${fw_tmp}/ota_firmware.zip" \
-        "''${fw_tmp}/ota_firmware.bin"
+      (
+        cd "''${fw_tmp}"
+        zip \
+          "ota_firmware.zip" \
+          "ota_firmware.bin"
+      )
 
       mv \
         "''${fw_tmp}/ota_firmware.zip" \
