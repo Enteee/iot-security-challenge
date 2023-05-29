@@ -14,29 +14,34 @@
     pkgs.picocom
     pkgs.rshell
     pkgs.mpfshell
+    pkgs.parallel
 
     pkgs.squashfsTools
     pkgs.zip
     pkgs.binwalk
+    pkgs.black
 
     pkgs.thc-hydra
     pkgs.nmap
   ];
 
   scripts.erase_flash.exec = ''
+    tty="''${1:-/dev/ttyUSB0}"
     esptool.py \
-      --port /dev/ttyUSB0 \
+      --port "''${tty}" \
       erase_flash
   '';
   scripts.getchip.exec = ''
+    tty="''${1:-/dev/ttyUSB0}"
     esptool.py \
-      --port /dev/ttyUSB0 \
+      --port "''${tty}" \
       read_mac \
     | sed -nre 's/Chip is ([^ ]+).*/\1/p' \
     | tr '[:upper:]' '[:lower:]'
   '';
 
   scripts.flash.exec = ''
+    tty="''${1:-/dev/ttyUSB0}"
     (
       cd "''${DEVENV_ROOT}"
       set -x
@@ -60,7 +65,7 @@
 
       esptool.py \
         --chip "''${chip_name["''$chip_id"]}" \
-        --port /dev/ttyUSB0 \
+        --port "''${tty}" \
         --baud 460800 \
         write_flash \
           --compress \
@@ -70,20 +75,32 @@
   '';
 
   scripts.repl.exec = ''
+    tty="''${1:-/dev/ttyUSB0}"
     picocom \
-      /dev/ttyUSB0 \
+      "''${tty}" \
       -b115200
   '';
 
   scripts.fs.exec = ''
-    mpfshell ttyUSB0
+    tty="''${1:-/dev/ttyUSB0}"
+    mpfshell \
+      "''${tty}"
+  '';
+
+  scripts.alltty.exec = ''
+    parallel \
+      --will-cite \
+      --tagstring "[{/.}]" \
+      --line-buffer \
+      "''${@} {}" ::: /dev/ttyUSB*
   '';
 
   scripts.upload.exec = ''
+    tty="''${1:-/dev/ttyUSB0}"
     (
       cd "''${DEVENV_ROOT}"
       rshell \
-        --port /dev/ttyUSB0 \
+        --port "''${tty}" \
         --file ./flash.cmds
     )
   '';
@@ -109,11 +126,15 @@
     )
   '';
 
-  scripts.doalll.exec = ''
+  scripts.clean_setup.exec = ''
     erase_flash
     flash
     mkfirmware
     upload
+  '';
+
+  scripts.doalll.exec = ''
+    clean_setup
     repl
   '';
 

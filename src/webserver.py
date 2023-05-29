@@ -2,7 +2,9 @@ from microWebSrv import MicroWebSrv
 from binascii import a2b_base64
 
 BASIC_AUTH_PASSWORD = "asdfgh"
-ADMIN_PASSWORD = open('adminpw.txt').read()
+ADMIN_PASSWORD = None
+with open('adminpw.txt') as fd:
+    ADMIN_PASSWORD = fd.read()
 
 def _basicAuth(httpClient, httpResponse):
     headers = httpClient.GetRequestHeaders()
@@ -70,5 +72,9 @@ def _httpHandlerTestPost(httpClient, httpResponse) :
 
 def start_server():
     print(f'[WS] Starting webserver')
-    srv = MicroWebSrv(webPath='www/')
-    srv.Start(threaded=False)
+    while True:
+        try:
+            srv = MicroWebSrv(webPath='www/')
+            srv.Start(threaded=False)
+        except Exception as ex:
+            print(f'[WS] Failed: {type(ex)} {ex}')

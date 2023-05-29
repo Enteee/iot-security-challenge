@@ -2,7 +2,7 @@ import random
 import network
 
 SSID_FILE = "ssid.txt"
-SSID_PREFIX = "BFH-Challenge-"
+SSID_PREFIX = "IOT-Challenge-"
 
 def start_ap():
     try:
