@@ -40,16 +40,17 @@ def _update_fom_station(sta_if, ssid):
 
 
 def _do_update(sta_if):
-    update_completed = False
+    update_completed = 0
     print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Searching for OTA device")
     stations = sta_if.scan()
     for ssid, bssid, channel, RSSI, security, hidden in stations:
         if ssid.startswith(SSID_PREFIX):
             print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Connecting to network: {ssid}")
             _update_fom_station(sta_if, ssid)
-            update_completed = True
+            update_completed += 1
 
-    return update_completed
+    print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Updated from {update_completed} devices")
+    return update_completed > 0
 
 
 def _reset_sta_if(sta_if):
@@ -74,7 +75,7 @@ def start_ota():
         try:
             _reset_sta_if(sta_if)
             if _do_update(sta_if):
-                print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] OTA Completed")
+                print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] OTA completed")
                 break
         except Exception as ex:
             print(f"[OTA {OTA_RETRY}/{MAX_OTA_RETRY}] Failed: {type(ex)} {ex}")
