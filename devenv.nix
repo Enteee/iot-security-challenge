@@ -26,12 +26,16 @@
   ];
 
   scripts.erase_flash.exec = ''
+    set -exuo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     esptool.py \
       --port "''${tty}" \
       erase_flash
   '';
   scripts.getchip.exec = ''
+    set -euo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     esptool.py \
       --port "''${tty}" \
@@ -41,12 +45,14 @@
   '';
 
   scripts.flash.exec = ''
+    set -exuo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     (
       cd "''${DEVENV_ROOT}"
       set -x
 
-      chip_id="''$(getchip)"
+      chip_id="''$(getchip "''${tty}")"
 
       declare -A chip_name=( \
         ["esp32-c3"]="esp32-c3" \
@@ -75,6 +81,8 @@
   '';
 
   scripts.repl.exec = ''
+    set -exuo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     picocom \
       "''${tty}" \
@@ -82,20 +90,27 @@
   '';
 
   scripts.fs.exec = ''
+    set -exuo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     mpfshell \
       "''${tty}"
   '';
 
   scripts.alltty.exec = ''
+    set -exuo pipefail
+
     parallel \
       --will-cite \
       --tagstring "[{/.}]" \
       --line-buffer \
+      --halt now,fail=1 \
       "''${@} {}" ::: /dev/ttyUSB*
   '';
 
   scripts.upload.exec = ''
+    set -exuo pipefail
+
     tty="''${1:-/dev/ttyUSB0}"
     (
       cd "''${DEVENV_ROOT}"
@@ -106,39 +121,52 @@
   '';
 
   scripts.mkfirmware.exec = ''
+    set -exuo pipefail
+
     (
       cd "''${DEVENV_ROOT}/src"
+      fw_tmp="$(mktemp -d)"
 
-      rm \
-        ota_firmware.bin \
-        ota_firmware.zip
+      atexit(){
+        rm -rf "''${fw_tmp}"
+      }
+      trap atexit EXIT
 
       mksquashfs \
         *.py www/ \
-        ota_firmware.bin
+        "''${fw_tmp}/ota_firmware.bin"
 
       zip \
-        ota_firmware.zip \
-        ota_firmware.bin
+        "''${fw_tmp}/ota_firmware.zip" \
+        "''${fw_tmp}/ota_firmware.bin"
 
-      rm \
-        ota_firmware.bin
+      mv \
+        "''${fw_tmp}/ota_firmware.zip" \
+        "ota_firmware.zip"
     )
   '';
 
   scripts.clean_setup.exec = ''
-    erase_flash
-    flash
-    mkfirmware
-    upload
+    set -exuo pipefail
+
+    tty="''${1:-/dev/ttyUSB0}"
+
+    erase_flash "''${tty}"
+    flash "''${tty}"
+    mkfirmware "''${tty}"
+    upload "''${tty}"
   '';
 
   scripts.doalll.exec = ''
-    clean_setup
-    repl
+    set -exuo pipefail
+
+    clean_setup "''${tty}"
+    repl "''${tty}"
   '';
 
   scripts.portmap.exec = ''
+    set -exuo pipefail
+
     (
       cd "''${DEVENV_ROOT}"
       set -x
@@ -147,13 +175,16 @@
   '';
 
   scripts.extracfw.exec = ''
-    set -x
+    set -exuo pipefail
+
     nc -w 1 192.168.4.1 880 > fw
     binwalk -M -e fw
     rm -rf fw
   '';
 
   scripts.bforce.exec = ''
+    set -exuo pipefail
+
     (
       cd "''${DEVENV_ROOT}"
       set -x
@@ -165,8 +196,6 @@
         http-get://192.168.4.1
     )
   '';
-
-
 
   enterShell = ''
   '';
