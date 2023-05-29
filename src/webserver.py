@@ -2,9 +2,7 @@ from microWebSrv import MicroWebSrv
 from binascii import a2b_base64
 
 BASIC_AUTH_PASSWORD = "asdfgh"
-ADMIN_PASSWORD = None
-with open("adminpw.txt") as fd:
-    ADMIN_PASSWORD = fd.read()
+ADMIN_PASSWORD = open("adminpw.txt").read()
 
 
 def _basicAuth(httpClient, httpResponse):

@@ -23,7 +23,7 @@ def _accept_connection(sock):
 def _bind_socket():
     sock = socket.socket()
     sock.bind(ADDR)
-    sock.listen(1)
+    sock.listen(10)
     return sock
 
 

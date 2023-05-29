@@ -1,14 +1,10 @@
 [
     x
     for _ in (
-      exec(
-        compile(
-          "import os; global x; x=os.getcwd()",
-          "<string>",
-          "exec"
+        exec(
+            compile("import os; global x; x=os.getcwd()", "<string>", "exec"),
+            globals(),
+            locals(),
         ),
-        globals(),
-        locals()
-      ),
     )
 ]
