@@ -33,6 +33,7 @@
       --port "''${tty}" \
       erase_flash
   '';
+
   scripts.getchip.exec = ''
     set -euo pipefail
 
