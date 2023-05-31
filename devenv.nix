@@ -21,6 +21,9 @@
     pkgs.binwalk
     pkgs.black
 
+    pkgs.iw
+    pkgs.wirelesstools
+
     pkgs.thc-hydra
     pkgs.nmap
   ];
